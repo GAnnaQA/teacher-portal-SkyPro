@@ -24,15 +24,14 @@ cecQ/edit?usp=sharing)
 - [Нефункциональный чек-лист](https://docs.google.com/spreadsheets/d/1uQckqQ8E1gyx0b5gOPBypBK1TctJcWY63pnLm70ICYk/edit?usp=sharing)  
   
 ### Smoke-тестирование
-- [Тест-кейсы](https://app.qase.io/project/KPP?previewMode=side&suite=1&tab=)  
-- Доступ в Qase.io  
+- [Тест-кейсы](https://drive.google.com/file/d/1lFkxy56JwQjLM0Si4cS5YOpDhyJm1WXa/view?usp=sharing) 
 
 ### Регрессионное тестирование
 - [Чек-листы](https://docs.google.com/spreadsheets/d/1uQckqQ8E1gyx0b5gOPBypBK1TctJcWY63pnLm70ICYk/edit?usp=sharing)  
 
 ### Приемочное тестирование
-- [Тест-кейсы](https://app.qase.io/project/KPP?previewMode=side&suite=2)  
+- [Тест-кейсы](https://drive.google.com/file/d/1RUgUCWpnh2Gy_nV-chPhfuVpUAykpWoF/view?usp=sharing)  
 
 ### Тестирование API
-- [Тест-кейсы](https://app.qase.io/project/KPP?previewMode=side&suite=3&tab=)  
+- [Тест-кейсы](https://drive.google.com/file/d/1WmtWyd8oF8do0zmbeG4x1MByQ_B5m5XP/view?usp=sharing)  
 - Коллекция Postman:  

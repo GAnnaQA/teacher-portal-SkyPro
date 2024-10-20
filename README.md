@@ -16,8 +16,7 @@
 Добавлен в календарь новый элемент — личные события. Преподаватель может использовать личные события для собственных встреч. Они служат напоминанием о запланированных событиях.
 
 ## Требования
- [Требования](https://docs.google.com/document/d/1WwTqJiKsxF8TGON7Nxi9qL5ibLS07XKCQ12LZyB
-cecQ/edit?usp=sharing)
+ [Требования](https://docs.google.com/document/d/1WwTqJiKsxF8TGON7Nxi9qL5ibLS07XKCQ12LZyBcecQ/edit?usp=sharing)
 
 ## Тестовая документация
 - [Функциональный чек-лист](https://docs.google.com/spreadsheets/d/1uQckqQ8E1gyx0b5gOPBypBK1TctJcWY63pnLm70ICYk/edit?usp=sharing) 
@@ -34,4 +33,4 @@ cecQ/edit?usp=sharing)
 
 ### Тестирование API
 - [Тест-кейсы](https://drive.google.com/file/d/1WmtWyd8oF8do0zmbeG4x1MByQ_B5m5XP/view?usp=sharing)  
-- Коллекция Postman:  
+- [Коллекция Postman](./postman_collection.json)

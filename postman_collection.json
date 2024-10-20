@@ -1,0 +1,1404 @@
+{
+	"info": {
+		"_postman_id": "7977b70a-1521-4f06-abf0-3d9456a7d53f",
+		"name": "Курсовая API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32679340"
+	},
+	"item": [
+		{
+			"name": "Позитивные",
+			"item": [
+				{
+					"name": "Получение расписания",
+					"item": [
+						{
+							"name": "Получение расписания на неделю",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let currentDate = new Date();\r",
+											"let firstDay = currentDate.getDate() - currentDate.getDay() + 1;\r",
+											"let mondayDate = new Date(currentDate.setDate(firstDay));\r",
+											"let formattedMondayDate = mondayDate.toISOString().split('T')[0] + 'T00:00:00+00:00';\r",
+											"pm.collectionVariables.set('mondayDate', formattedMondayDate);\r",
+											"let lastDay = currentDate.getDate() - currentDate.getDay() + 8;\r",
+											"let NextMondayDate = new Date(currentDate.setDate(lastDay));\r",
+											"let formattedNextWeekDate = NextMondayDate.toISOString().split('T')[0] + 'T00:00:00+00:00';\r",
+											"pm.collectionVariables.set(\"lastDate\", formattedNextWeekDate);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cookie",
+										"value": "{{Token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"from\": \"{{mondayDate}}\",\r\n    \"till\": \"{{lastDate}}\",\r\n    \"onlyTypes\": []\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseURL}}/events",
+									"host": [
+										"{{BaseURL}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "добавление события",
+					"item": [
+						{
+							"name": "добавление события с текущей датой",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let now = new Date();\r",
+											"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+											"let futureTime = new Date(now.getTime() + 60 * 60 * 1000);\r",
+											"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"let jsonData = pm.response.json();\r",
+											"let id = jsonData.data.payload.id;\r",
+											"pm.collectionVariables.set(\"eventID\", id);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cookie",
+										"value": "{{Token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\":\"{{startAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseURL}}/createPersonal",
+									"host": [
+										"{{BaseURL}}"
+									],
+									"path": [
+										"createPersonal"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "добавление события с датой в будущем",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Вычисление futureDate (дата через неделю от текущей даты)\r",
+											"let now = new Date();\r",
+											"let futureTime = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); \r",
+											"pm.collectionVariables.set('futureDateAt', futureTime.toISOString().split('.')[0] + '+00:00');\r",
+											"let futureTimeEnd = new Date(futureTime.getTime() + 5 * 60 * 60 * 1000);\r",
+											"pm.collectionVariables.set('futureDateEnd', futureTimeEnd.toISOString().split('.')[0] + '+00:00');"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"let jsonData = pm.response.json();\r",
+											"let id = jsonData.data.payload.id;\r",
+											"pm.collectionVariables.set(\"eventID\", id);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cookie",
+										"value": "{{Token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{futureDateEnd}}\",\r\n    \"startAt\":\"{{futureDateAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseURL}}/createPersonal",
+									"host": [
+										"{{BaseURL}}"
+									],
+									"path": [
+										"createPersonal"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "добавление события с датой в прошлом",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Вычисление pastDate (за неделю от текущей даты)\r",
+											"let now = new Date();\r",
+											"let pastDate = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)); \r",
+											"pm.collectionVariables.set('PastDateAt', pastDate.toISOString().split('.')[0] + '+00:00');\r",
+											"let pastDateEnd = new Date(pastDate.getTime() + 2 * 60 * 60 * 1000);\r",
+											"pm.collectionVariables.set('PastDateEnd', pastDateEnd.toISOString().split('.')[0] + '+00:00');"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"let jsonData = pm.response.json();\r",
+											"let id = jsonData.data.payload.id;\r",
+											"pm.collectionVariables.set(\"eventID\", id);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cookie",
+										"value": "{{Token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{PastDateEnd}}\",\r\n    \"startAt\":\"{{PastDateAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseURL}}/createPersonal",
+									"host": [
+										"{{BaseURL}}"
+									],
+									"path": [
+										"createPersonal"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "добавление события (с пустым description)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let now = new Date();\r",
+											"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+											"let futureTime = new Date(now.getTime() + 9 * 60 * 60 * 1000);\r",
+											"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"let jsonData = pm.response.json();\r",
+											"let id = jsonData.data.payload.id;\r",
+											"pm.collectionVariables.set(\"eventID\", id);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cookie",
+										"value": "{{Token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\":\"{{startAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseURL}}/createPersonal",
+									"host": [
+										"{{BaseURL}}"
+									],
+									"path": [
+										"createPersonal"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Редактирование события",
+					"item": [
+						{
+							"name": "Редактирование description",
+							"item": [
+								{
+									"name": "добавление события",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"let now = new Date();\r",
+													"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+													"let futureTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);\r",
+													"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"eventIDforUpdate\", id);\r",
+													"let color = jsonData.data.payload.payload.color;\r",
+													"pm.collectionVariables.set(\"color\", color);\r",
+													"let title = jsonData.data.payload.payload.title;\r",
+													"pm.collectionVariables.set(\"title\", title);\r",
+													"let TimeAt = jsonData.data.startAt;\r",
+													"pm.collectionVariables.set(\"startAtForUpdate\", TimeAt);\r",
+													"let durationSeconds = jsonData.data.durationSeconds;\r",
+													"pm.collectionVariables.set(\"durationSeconds\", durationSeconds);"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\":\"{{startAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/createPersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"createPersonal"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование description",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"ChangeEventID\", id);\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"// Получение значения переменной коллекции \"startAt\"\r",
+													"let startAt = pm.collectionVariables.get(\"startAtForUpdate\");\r",
+													"let startAtValue = new Date(startAt);\r",
+													"// Получение значения переменной коллекции \"durationSeconds\"\r",
+													"let durationSeconds = pm.collectionVariables.get(\"durationSeconds\");\r",
+													"let durationSecondsValue = parseInt(durationSeconds, 10)\r",
+													"let endDate = new Date(startAtValue.getTime() + durationSecondsValue * 1000);\r",
+													"pm.collectionVariables.set('endAtForUpdate', endDate.toISOString().split('.')[0] + '+00:00');"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"backgroundColor\": \"#F4F5F6\",\r\n\"color\": \"{{color}}\",\r\n\"description\": \"{{$randomPhrase}}\",\r\n\"endAt\": \"{{endAtForUpdate}}\",\r\n\"id\": {{eventIDforUpdate}},\r\n\"oldStartAt\": \"{{startAtForUpdate}}\",\r\n\"startAt\": \"{{startAtForUpdate}}\",\r\n\"title\": \"{{title}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/updatePersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"updatePersonal"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Редактирование title",
+							"item": [
+								{
+									"name": "добавление события",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"let now = new Date();\r",
+													"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+													"let futureTime = new Date(now.getTime() + 30 * 60 * 1000);\r",
+													"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"eventIDforUpdate\", id);\r",
+													"let color = jsonData.data.payload.payload.color;\r",
+													"pm.collectionVariables.set(\"color\", color);\r",
+													"let description = jsonData.data.payload.payload.description;\r",
+													"pm.collectionVariables.set(\"description\", description);\r",
+													"let TimeAt = jsonData.data.startAt;\r",
+													"pm.collectionVariables.set(\"startAtForUpdate\", TimeAt);\r",
+													"let durationSeconds = jsonData.data.durationSeconds;\r",
+													"pm.collectionVariables.set(\"durationSeconds\", durationSeconds);\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\":\"{{startAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/createPersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"createPersonal"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование title",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"ChangeEventID\", id);\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"// Получение значения переменной коллекции \"startAt\"\r",
+													"let startAt = pm.collectionVariables.get(\"startAtForUpdate\");\r",
+													"let startAtValue = new Date(startAt);\r",
+													"// Получение значения переменной коллекции \"durationSeconds\"\r",
+													"let durationSeconds = pm.collectionVariables.get(\"durationSeconds\");\r",
+													"let durationSecondsValue = parseInt(durationSeconds, 10)\r",
+													"let endDate = new Date(startAtValue.getTime() + durationSecondsValue * 1000);\r",
+													"pm.collectionVariables.set('endAtForUpdate', endDate.toISOString().split('.')[0] + '+00:00');"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"backgroundColor\": \"#F4F5F6\",\r\n\"color\": \"{{color}}\",\r\n\"description\": \"{{description}}\",\r\n\"endAt\": \"{{endAtForUpdate}}\",\r\n\"id\": {{eventIDforUpdate}},\r\n\"oldStartAt\": \"{{startAtForUpdate}}\",\r\n\"startAt\": \"{{startAtForUpdate}}\",\r\n\"title\": \"{{$randomJobTitle}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/updatePersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"updatePersonal"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Редактирование даты события",
+							"item": [
+								{
+									"name": "добавление события",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"let now = new Date();\r",
+													"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+													"let futureTime = new Date(now.getTime() + 30 * 60 * 1000);\r",
+													"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"eventIDforUpdate\", id);\r",
+													"let color = jsonData.data.payload.payload.color;\r",
+													"pm.collectionVariables.set(\"color\", color);\r",
+													"let description = jsonData.data.payload.payload.description;\r",
+													"pm.collectionVariables.set(\"description\", description);\r",
+													"let TimeAt = jsonData.data.startAt;\r",
+													"pm.collectionVariables.set(\"startAtForUpdate\", TimeAt);\r",
+													"let title = jsonData.data.payload.payload.title;\r",
+													"pm.collectionVariables.set(\"title\", title);\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\":\"{{startAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/createPersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"createPersonal"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование даты",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"ChangeEventID\", id);\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"backgroundColor\": \"#F4F5F6\",\r\n\"color\": \"{{color}}\",\r\n\"description\": \"{{description}}\",\r\n\"endAt\": \"2024-05-17T13:33:18+00:00\",\r\n\"id\": {{eventIDforUpdate}},\r\n\"oldStartAt\": \"{{startAtForUpdate}}\",\r\n\"startAt\": \"2024-05-17T12:15:34+00:00\",\r\n\"title\": \"{{title}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/updatePersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"updatePersonal"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Редактирование цвета события",
+							"item": [
+								{
+									"name": "добавление события",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"let now = new Date();\r",
+													"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+													"let futureTime = new Date(now.getTime() + 30 * 60 * 1000);\r",
+													"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"eventIDforUpdate\", id);\r",
+													"let durationSeconds = jsonData.data.durationSeconds;\r",
+													"pm.collectionVariables.set(\"durationSeconds\", durationSeconds);\r",
+													"let description = jsonData.data.payload.payload.description;\r",
+													"pm.collectionVariables.set(\"description\", description);\r",
+													"let TimeAt = jsonData.data.startAt;\r",
+													"pm.collectionVariables.set(\"startAtForUpdate\", TimeAt);\r",
+													"let title = jsonData.data.payload.payload.title;\r",
+													"pm.collectionVariables.set(\"title\", title);\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\":\"{{startAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/createPersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"createPersonal"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование color",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let jsonData = pm.response.json();\r",
+													"let id = jsonData.data.payload.id;\r",
+													"pm.collectionVariables.set(\"ChangeEventID\", id);\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"// Получение значения переменной коллекции \"startAt\"\r",
+													"let startAt = pm.collectionVariables.get(\"startAtForUpdate\");\r",
+													"let startAtValue = new Date(startAt);\r",
+													"// Получение значения переменной коллекции \"durationSeconds\"\r",
+													"let durationSeconds = pm.collectionVariables.get(\"durationSeconds\");\r",
+													"let durationSecondsValue = parseInt(durationSeconds, 10)\r",
+													"let endDate = new Date(startAtValue.getTime() + durationSecondsValue * 1000);\r",
+													"pm.collectionVariables.set('endAtForUpdate', endDate.toISOString().split('.')[0] + '+00:00');"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "{{Token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"backgroundColor\": \"#F4F5F6\",\r\n\"color\": \"#0000FF\",\r\n\"description\": \"{{description}}\",\r\n\"endAt\": \"{{endAtForUpdate}}\",\r\n\"id\": {{eventIDforUpdate}},\r\n\"oldStartAt\": \"{{startAtForUpdate}}\",\r\n\"startAt\": \"{{startAtForUpdate}}\",\r\n\"title\": \"{{title}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseURL}}/updatePersonal",
+											"host": [
+												"{{BaseURL}}"
+											],
+											"path": [
+												"updatePersonal"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Удаление события",
+					"item": [
+						{
+							"name": "добавление события",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let now = new Date();\r",
+											"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+											"let futureTime = new Date(now.getTime() + 30 * 60 * 1000);\r",
+											"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();\r",
+											"let id = jsonData.data.payload.id;\r",
+											"pm.collectionVariables.set(\"eventIDforDelete\", id);\r",
+											"let TimeAt = jsonData.data.startAt;\r",
+											"pm.collectionVariables.set(\"startAtForDelete\", TimeAt);\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cookie",
+										"value": "{{Token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"backgroundColor\":\"#F4F5F6\",\r\n    \"color\":\"#81888D\",\r\n    \"description\":\"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\":\"{{startAt}}\",\r\n    \"title\":\"{{$randomCompanyName}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseURL}}/createPersonal",
+									"host": [
+										"{{BaseURL}}"
+									],
+									"path": [
+										"createPersonal"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Удаление",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"pm.test(\"data is true\", function () {\r",
+											"    let jsonData = pm.response.json();\r",
+											"    pm.expect(jsonData.data).to.eql(true);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Cookie",
+										"value": "{{Token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n \"id\": {{eventIDforDelete}},\r\n \"startAt\": \"{{startAtForDelete}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseURL}}/removePersonal",
+									"host": [
+										"{{BaseURL}}"
+									],
+									"path": [
+										"removePersonal"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Негативные",
+			"item": [
+				{
+					"name": "Получение расписания без авторизации",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let currentDate = new Date();\r",
+									"let firstDay = currentDate.getDate() - currentDate.getDay() + 1;\r",
+									"let mondayDate = new Date(currentDate.setDate(firstDay));\r",
+									"let formattedMondayDate = mondayDate.toISOString().split('T')[0] + 'T00:00:00+00:00';\r",
+									"pm.collectionVariables.set('mondayDate', formattedMondayDate);\r",
+									"let lastDay = currentDate.getDate() - currentDate.getDay() + 8;\r",
+									"let NextMondayDate = new Date(currentDate.setDate(lastDay));\r",
+									"let formattedNextWeekDate = NextMondayDate.toISOString().split('T')[0] + 'T00:00:00+00:00';\r",
+									"pm.collectionVariables.set(\"lastDate\", formattedNextWeekDate);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"from\": \"{{mondayDate}}\",\r\n    \"till\": \"{{lastDate}}\",\r\n    \"onlyTypes\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/events",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "название более 40 символов",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let now = new Date();\r",
+									"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+									"let futureTime = new Date(now.getTime() + 60 * 60 * 1000);\r",
+									"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{Token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"backgroundColor\": \"#F4F5F6\",\r\n    \"color\": \"#81888D\",\r\n    \"description\": \"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\": \"{{startAt}}\",\r\n    \"title\": \"зжхуюсызюъэдъшёчхерфцощьмцсуюйцлргжискаёи\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/createPersonal",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"createPersonal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "добавление события без обязательного параметра",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let now = new Date();\r",
+									"pm.collectionVariables.set('startAt', now.toISOString().split('.')[0] + '+00:00');\r",
+									"let futureTime = new Date(now.getTime() + 60 * 60 * 1000);\r",
+									"pm.collectionVariables.set('endAt', futureTime.toISOString().split('.')[0] + '+00:00');"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{Token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"backgroundColor\": \"#F4F5F6\",\r\n    \"color\": \"#81888D\",\r\n    \"description\": \"{{$randomJobArea}}\",\r\n    \"endAt\": \"{{endAt}}\",\r\n    \"startAt\": \"{{startAt}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/createPersonal",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"createPersonal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "дата ранее минимальной (01.01.1900)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{Token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"backgroundColor\": \"#F4F5F6\",\r\n    \"color\": \"#81888D\",\r\n    \"description\": \"{{$randomJobArea}}\",\r\n    \"endAt\": \"1899-12-31T15:14:31+00:00\",\r\n    \"startAt\": \"1899-12-31T14:14:31+00:00\",\r\n    \"title\": \"{{$randomCompanyName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/createPersonal",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"createPersonal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Дата позже максимальной (31.12.2099)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "{{Token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"backgroundColor\": \"#F4F5F6\",\r\n    \"color\": \"#81888D\",\r\n    \"description\": \"{{$randomJobArea}}\",\r\n    \"endAt\": \"2100-01-01T15:14:31+00:00\",\r\n    \"startAt\": \"2100-01-01T14:14:31+00:00\",\r\n    \"title\": \"{{$randomCompanyName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/createPersonal",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"createPersonal"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseURL",
+			"value": "https://api-teachers.skyeng.ru/v2/schedule",
+			"type": "string"
+		},
+		{
+			"key": "Token",
+			"value": "token_global=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VySWQiOjE0NTk2OTMzLCJpZGVudGl0eSI6InRlc3QudHN0MzE3QHNreWVuZy5ydSIsImlkZW50aXR5TG9naW4iOm51bGwsImlkZW50aXR5RW1haWwiOiJ0ZXN0LnRzdDMxN0Bza3llbmcucnUiLCJpZGVudGl0eVBob25lIjoiKzc5OTk1NTUzMzEwIiwibmFtZSI6Ilx1MDQxOFx1MDQzM1x1MDQzZVx1MDQ0MFx1MDQ0YyIsInN1cm5hbWUiOiJcdTA0MTJcdTA0MzhcdTA0NDBcdTA0NDdcdTA0MzhcdTA0M2EiLCJlbWFpbCI6InRlc3QudHN0MzE3QHNreWVuZy5ydSIsInVpTGFuZ3VhZ2UiOiJydSIsImxvY2FsZSI6InJ1Iiwic2VydmljZUxvY2FsZSI6bnVsbCwidWFzIjozMCwiand0VHlwZSI6MSwianRpIjoiMDhTQjdrdGMyVFQ0eWtycUxHekUxaG9jWm9TNlpKRXQiLCJicmFuZCI6bnVsbCwiZXhwIjoxNzE1ODU5NjIzLCJhdmF0YXJVcmwiOiJodHRwczpcL1wvYXV0aC1hdmF0YXJzLXNreWVuZy5pbWdpeC5uZXRcLzE0NTk2OTMzXC85OGY2YmViNS1mMDdiLTQxZWItOGJjMi00NTcxNDBhNzQ4ODM_YXV0bz1mb3JtYXQlMkNlbmhhbmNlJmZpdD1jcm9wJmg9MjAwJml4bGliPXBocC0yLjEuMSZxPTc1JnNhdD04JnNoYXJwPTEwJnZpYj04Jnc9MjAwIiwiYmlydGhkYXkiOiIxOTcwLTEyLTMxIiwiYUlzU3Ryb25nIjp0cnVlLCJhVHlwZSI6IlVTRVJOQU1FX1BBU1NXT1JEIiwiYVRpbWUiOjE3MTM5NjQxMDgsInJvbGVzIjpbIlJPTEVfVEVBQ0hFUl9DQU5ESURBVEUiLCJST0xFX1RFQUNIRVJfQ0FORElEQVRFX0JBU0VfQUNDRVNTIiwiUk9MRV9UVENfVVNBR0UiLCJST0xFX1ZJTUJPWF9URUFDSEVSX1VTQUdFIiwiUk9MRV9URUFDSEVSIiwiUk9MRV9DUk0yX1RFQUNIRVJfQUNDRVNTIiwiUk9MRV9NQVRIX1RFQUNIRVIiLCJST0xFX01BVEhfQ09OVEVOVF9USEVNRV9WSUVXIl19.CIqtYEk1OWoMKIrE5qU9vPLXxUoUtBjsLcSBMHdIiQBi15Aoa6NwbDbuS7eXyeWpthEYgC4F8myVtu_Rm2WCMqruz0sChEALsJcSdPC4pyXOS-jOmuC9y2_DLUnUaCYXT1CbYIlOBZGu3wE8Kw-6m5EKqE9EV5zZQmCEAcr9OyRaMLy6Uqyo4W8yWDY0j8viTTopatb5xkfEcnQ5gm98ijaOIGRdAC0mplsD3jWWp_h13czgHzd67IwPEVu9pMXM-nOUNhWowdRH1oMx7koXn5GhruycyaZ68-jYDhgHgNkIC9nuh558X9rS_dPLMZ-x3GbWHzP1sSnL8hH7VnjOL68R2odSgXDmH3-VgaAG9UkzfBJzIBb65KIiusywbq-2bdje85qRfkLHUWQAhcloYtz76sALFQMbdKIcv_H0n3MGIFlhtzt7Wf5PDTDPYnTTjvCN5aaeiNfNGT_bdRtvZFdcIkuQOM0-DAcYuYbmhnLsOAPp9eOCP43sVs4fJLzbdQh8ESfT8bjTtreyKwU7ZtmMuL1kZb2kc8vgZYaTVXu9fzkkQ19fuxDuNtWRiH2b-MeklPRGsp-ZCA8z4YG2HU6AWjHxVe7tP9t1vc5c0ue7GUq0I98hSvAazziJZEzIY5alkGHqED-wuaicFXNODWdbN1R_onnMt63nHnEZVGE",
+			"type": "string"
+		},
+		{
+			"key": "startAt",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "endAt",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "futureDateAt",
+			"value": ""
+		},
+		{
+			"key": "futureDateEnd",
+			"value": ""
+		},
+		{
+			"key": "color",
+			"value": ""
+		},
+		{
+			"key": "title",
+			"value": ""
+		},
+		{
+			"key": "startAtForUpdate",
+			"value": ""
+		},
+		{
+			"key": "durationSeconds",
+			"value": ""
+		},
+		{
+			"key": "endAtForUpdate",
+			"value": ""
+		},
+		{
+			"key": "eventIDforUpdate",
+			"value": ""
+		},
+		{
+			"key": "ChangeEventID",
+			"value": ""
+		},
+		{
+			"key": "description",
+			"value": ""
+		},
+		{
+			"key": "eventIDforDelete",
+			"value": ""
+		},
+		{
+			"key": "startAtForDelete",
+			"value": ""
+		},
+		{
+			"key": "mondayDate",
+			"value": ""
+		},
+		{
+			"key": "lastDate",
+			"value": ""
+		},
+		{
+			"key": "PastDateAt",
+			"value": ""
+		},
+		{
+			"key": "PastDateEnd",
+			"value": ""
+		}
+	]
+}

@@ -34,3 +34,5 @@
 ### Тестирование API
 - [Тест-кейсы](https://drive.google.com/file/d/1WmtWyd8oF8do0zmbeG4x1MByQ_B5m5XP/view?usp=sharing)  
 - [Коллекция Postman](./postman_collection.json)
+
+### [Автоматизированные тесты на Python](https://github.com/GAnnaQA/diploma?tab=readme-ov-file#портал-преподавателя-skyeng)

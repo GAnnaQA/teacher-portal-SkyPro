@@ -3,7 +3,7 @@ import random
 
 
 class data_test:
-    url_auto_SkyEng = "https://id.skyeng.ru/login?redirect=https%3A%2F%2Fskyeng.ru%2F"
+    url_auto_SkyEng = "https://id.skyeng.ru/login?redirect=https%3A%2F%2Fteacher.skyeng.ru%2F"
     user_name_teacher = "test.tst345@skyeng.ru"
     user_password_teacher = "2DbhAAPG6q"
     user_name_student = "skypro1@skypro.ru"
